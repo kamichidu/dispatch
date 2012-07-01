@@ -6,6 +6,7 @@ use strict;
 use warnings;
 use Carp qw/cluck/;
 use Getopt::Long;
+use Pod::Usage;
 use constant {
 	PREFIX => '~', 
 	FORMAT => '', 
@@ -15,17 +16,22 @@ sub mv_operate(%);
 sub test_operate(%);
 
 MAIN: {
-	my ($prefix, $format, $test_mode);
+	my ($prefix, $format, $test_mode, $help, $man);
 
 	$prefix= PREFIX;
 	$format= FORMAT;
-	$test_mode= undef;
+	$test_mode= 0;
+	$help= 0;
+	$man= 0;
 	GetOptions(
 		'prefix=s' => \$prefix, 
 		'format=s' => \$format, 
 		'test'     => \$test_mode, 
-		);
-	Carp::confess 'no input file name format.' unless defined $format;
+		'help|?'   => \$help, 
+		'man'      => \$man, 
+		) or pod2usage(2);
+	pod2usage(1) if $help;
+	pod2usage(-exitstatus => 0, -verbose => 2) if $man;
 ### $format
 
 	my @files= @ARGV;
@@ -65,4 +71,42 @@ sub test_operate(%){
 		say $from, $to;
 	}
 }
+
+__END__
+
+=encoding utf-8
+
+=head1 NAME
+
+dispatch - 正規表現によってファイル名から対応するディレクトリに、引数として渡された(複数の)ファイルを移動する。
+
+=head1 SYNOPSIS
+
+dispatch [options] [file ...]
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--format>
+
+=item B<--prefix>
+
+=item B<--test>
+
+=item B<--help>
+
+簡単なドキュメントを表示する。
+
+=item B<--man>
+
+ドキュメントを表示する。
+
+=back
+
+=head1 DESCRIPTION
+
+
+
+=cut
 
